@@ -9,7 +9,12 @@ namespace Projeto.Data.Repositories.ServicoRepository
     public class ServicoRepository : IServicoRepository
     {
         //Somente para não usar nenhum DB
-        private readonly List<Servico> _servicos = new List<Servico>();
+        private readonly IList<Servico> _servicos;
+
+        public ServicoRepository(IList<Servico> servicos)
+        {
+            _servicos = servicos;
+        }
 
 
         public Servico ConsultarPorCodigo(Guid codigo)
@@ -29,19 +34,19 @@ namespace Projeto.Data.Repositories.ServicoRepository
 
         public void EditarColaborador(Servico servico)
         {
-            _servicos.RemoveAll(x => x.Codigo == servico.Codigo);
+            _servicos.Remove(_servicos.First(x => x.Codigo == servico.Codigo));
             _servicos.Add(servico);
         }
 
         public void EditarIniciarServico(Servico servico)
         {
-            _servicos.RemoveAll(x => x.Codigo == servico.Codigo);
+            _servicos.Remove(_servicos.First(x => x.Codigo == servico.Codigo));
             _servicos.Add(servico);
         }
 
         public void EditarFinalizarServico(Servico servico)
         {
-            _servicos.RemoveAll(x => x.Codigo == servico.Codigo);
+            _servicos.Remove(_servicos.First(x => x.Codigo == servico.Codigo));
             _servicos.Add(servico);
         }
 

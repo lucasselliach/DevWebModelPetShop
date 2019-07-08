@@ -9,7 +9,12 @@ namespace Projeto.Data.Repositories.ColaboradoresRepository
     public class ColaboradorRepository : IColaboradorRepository
     {
         //Somente para não usar nenhum DB
-        private readonly List<Colaborador> _colaboradores = new List<Colaborador>();
+        private readonly IList<Colaborador> _colaboradores;
+
+        public ColaboradorRepository(IList<Colaborador> colaboradores)
+        {
+            _colaboradores = colaboradores;
+        }
 
 
         public Colaborador ConsultarPorCodigo(Guid codigo)
@@ -29,7 +34,7 @@ namespace Projeto.Data.Repositories.ColaboradoresRepository
 
         public void Editar(Colaborador colaborador)
         {
-            _colaboradores.RemoveAll(x => x.Codigo == colaborador.Codigo);
+            _colaboradores.Remove(_colaboradores.First(x => x.Codigo == colaborador.Codigo));
             _colaboradores.Add(colaborador);
         }
 

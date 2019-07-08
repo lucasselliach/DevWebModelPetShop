@@ -9,7 +9,12 @@ namespace Projeto.Data.Repositories.PessoaRepository
     public class PessoaRepository : IPessoaRepository
     {
         //Somente para não usar nenhum DB
-        private readonly List<Pessoa> _pessoas = new List<Pessoa>();
+        private readonly IList<Pessoa> _pessoas;
+
+        public PessoaRepository(IList<Pessoa> pessoas)
+        {
+            _pessoas = pessoas;
+        }
 
 
         public Pessoa ConsultarPorCodigo(Guid codigo)
@@ -29,7 +34,7 @@ namespace Projeto.Data.Repositories.PessoaRepository
 
         public void Editar(Pessoa pessoa)
         {
-            _pessoas.RemoveAll(x => x.Codigo == pessoa.Codigo);
+            _pessoas.Remove(_pessoas.First(x => x.Codigo == pessoa.Codigo));
             _pessoas.Add(pessoa);
         }
 

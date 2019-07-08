@@ -9,7 +9,12 @@ namespace Projeto.Data.Repositories.ClienteRepository
     public class ClienteRepository : IClienteRepository
     {
         //Somente para não usar nenhum DB
-        private readonly List<Cliente> _clientes = new List<Cliente>();
+        private readonly IList<Cliente> _clientes;
+
+        public ClienteRepository(IList<Cliente> clientes)
+        {
+            _clientes = clientes;
+        }
 
 
         public Cliente ConsultarPorCodigo(Guid codigo)
@@ -29,7 +34,7 @@ namespace Projeto.Data.Repositories.ClienteRepository
 
         public void Editar(Cliente cliente)
         {
-            _clientes.RemoveAll(x => x.Codigo == cliente.Codigo);
+            _clientes.Remove(_clientes.First(x => x.Codigo == cliente.Codigo));
             _clientes.Add(cliente);
         }
 

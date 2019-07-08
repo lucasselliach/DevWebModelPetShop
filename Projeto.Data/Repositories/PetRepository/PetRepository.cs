@@ -9,7 +9,12 @@ namespace Projeto.Data.Repositories.PetRepository
     public class PetRepository : IPetRepository
     {
         //Somente para não usar nenhum DB
-        private readonly List<Pet> _pets = new List<Pet>();
+        private readonly IList<Pet> _pets;
+
+        public PetRepository(IList<Pet> pets)
+        {
+            _pets = pets;
+        }
 
 
         public Pet ConsultarPorCodigo(Guid codigo)
@@ -29,7 +34,7 @@ namespace Projeto.Data.Repositories.PetRepository
 
         public void Editar(Pet pet)
         {
-            _pets.RemoveAll(x => x.Codigo == pet.Codigo);
+            _pets.Remove(_pets.First(x => x.Codigo == pet.Codigo));
             _pets.Add(pet);
         }
 

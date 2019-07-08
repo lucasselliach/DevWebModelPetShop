@@ -42,7 +42,7 @@ namespace Projeto.Domain.Shared.Pessoas.PessoaValidations
                 .NotEmpty().WithMessage("CPF da pessoa não pode ser vazio.")
                 .MaximumLength(11).WithMessage("CPF da pessoa não pode ter mais que 11 caracteres.")
                 .MinimumLength(11).WithMessage("CPF da pessoa não pode ter menos que 11 caracteres.")
-                .Must(IsCpf).WithMessage("CPF da pessoa está em um formato incorreto.");
+                .Must(IsCpf).WithMessage("CPF da pessoa está em um formato incorreto. Ele não é valido.");
         }
 
         private void RgIsValid()

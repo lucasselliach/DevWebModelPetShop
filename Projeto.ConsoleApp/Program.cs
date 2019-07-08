@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using Projeto.Application.ClientesService;
 using Projeto.Application.ColaboradoresService;
 using Projeto.Application.PaisesService;
@@ -46,19 +48,27 @@ namespace Projeto.ConsoleApp
         {
             Console.WriteLine("Inicio da aplicação...                               LUCAS ALVES SELLIACH");
             Console.WriteLine("=========================================================================");
-            Console.WriteLine("Criando as depedencias tipo scoped, simulando a injeção de dependência.  ");
+            Console.WriteLine("Criando as depedencias tipo Singleton, simulando a injeção de dependência.  ");
 
-            IPaisRepository paisRepository = new PaisRepository();
-            IPessoaRepository pessoaRepository = new PessoaRepository();
-            IColaboradorRepository colaboradorRepository = new ColaboradorRepository();
-            IClienteRepository clienteRepository = new ClienteRepository();
-            IPetRepository petRepository = new PetRepository();
-            IServicoRepository servicoRepository = new ServicoRepository();
+            var paises = new List<Pais>();
+            var pessoas = new List<Pessoa>();
+            var colaboradores = new List<Colaborador>();
+            var clientes = new List<Cliente>();
+            var pets = new List<Pet>();
+            var servicos = new List<Servico>();
+
+
+            IPaisRepository paisRepository = new PaisRepository(paises);
+            IPessoaRepository pessoaRepository = new PessoaRepository(pessoas);
+            IColaboradorRepository colaboradorRepository = new ColaboradorRepository(colaboradores);
+            IClienteRepository clienteRepository = new ClienteRepository(clientes);
+            IPetRepository petRepository = new PetRepository(pets);
+            IServicoRepository servicoRepository = new ServicoRepository(servicos);
 
             Console.WriteLine("=========================================================================");
             Console.WriteLine("Criação do PAÍS pelo operador do sistema, para simples teste...          ");
 
-            //Depedencia tipo Singleton
+            //Depedencia tipo Scoped
             IPaisValidation paisValidation = new PaisValidation();
             IPaisService paisService = new PaisService(paisRepository, paisValidation);
             var pais = new Pais("teste", "teste");
@@ -80,7 +90,7 @@ namespace Projeto.ConsoleApp
             Console.WriteLine("=========================================================================");
             Console.WriteLine("Criação do Colaborador pelo operador do sistema, para simples teste...   ");
             
-            //Depedencia tipo Singleton
+            //Depedencia tipo Scoped
             IColaboradorValidation colaboradorValidation1 = new ColaboradorValidation();
             IColaboradorService colaboradorService1 = new ColaboradorService(colaboradorRepository, colaboradorValidation1, pessoaRepository);
             var pessoaFisicaColaborador = new PessoaFisica("Colaboradorzinho", "688.404.530-24", "99999999", DateTime.Now, "teste@teste.com", "99 9999-9999", "99 99999-9999", "Teste de sistema", "teste", 0, "teste", "teste", "teste", "teste", "SC", pais);
@@ -88,21 +98,52 @@ namespace Projeto.ConsoleApp
             colaboradorService1.Criar(colaborador1);
             Console.WriteLine("Colaborador 1 pessoa fisica Criada!");
 
-            //Depedencia tipo Singleton
+            //Depedencia tipo Scoped
             IColaboradorValidation colaboradorValidation2 = new ColaboradorValidation();
             IColaboradorService colaboradorService2 = new ColaboradorService(colaboradorRepository, colaboradorValidation2, pessoaRepository);
             var pessoaFisicaColaborador2 = new PessoaFisica("Colaboradorzinho 2", "688.404.530-24", "99999999", DateTime.Now, "teste@teste.com", "99 9999-9999", "99 99999-9999", "Teste de sistema", "teste", 0, "teste", "teste", "teste", "teste", "SC", pais);
             var colaborador2 = new Colaborador(pessoaFisicaColaborador2, "Auxiliar Veterinário");
             colaboradorService2.Criar(colaborador2);
             Console.WriteLine("Colaborador 2 pessoa fisica Criada!");
+
+            //Depedencia tipo Scoped
+            IColaboradorValidation colaboradorValidation3 = new ColaboradorValidation();
+            IColaboradorService colaboradorService3 = new ColaboradorService(colaboradorRepository, colaboradorValidation3, pessoaRepository);
+            var pessoaFisicaColaborador3 = new PessoaFisica("Colaboradorzinho 3", "688.404.530-24", "99999999", DateTime.Now, "teste@teste.com", "99 9999-9999", "99 99999-9999", "Teste de sistema", "teste", 0, "teste", "teste", "teste", "teste", "SC", pais);
+            var colaborador3 = new Colaborador(pessoaFisicaColaborador3, "Gerente");
+            colaboradorService3.Criar(colaborador3);
+            Console.WriteLine("Colaborador 3 pessoa fisica Criada!");
+
+            try
+            {
+                //Depedencia tipo Scoped
+                IColaboradorValidation colaboradorValidationErro = new ColaboradorValidation();
+                IColaboradorService colaboradorServiceErro = new ColaboradorService(colaboradorRepository, colaboradorValidationErro, pessoaRepository);
+                var pessoaFisicaColaboradorErro = new PessoaFisica("Colaboradorzinho ERRO 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000", "999.999.999-99", "", DateTime.Now, "", "", "", "", "", 0, "", "teste", "teste", "teste", "SC", pais);
+                var colaboradorErro = new Colaborador(pessoaFisicaColaboradorErro, "");
+                colaboradorServiceErro.Criar(colaboradorErro);
+            }
+            catch (Exception e)
+            {
+                var listaDeErro = e.Message.Split('~');
+                Console.WriteLine(" ");
+                Console.WriteLine("Erros ao criar colaborador com erros de validações");
+                foreach (var erro in listaDeErro)
+                {
+                    Console.WriteLine(erro);
+                }
+                Console.WriteLine(" ");
+            }
+
             Console.WriteLine("======================");
+
 
             Console.WriteLine("Colaboradores cadastrados: ");
 
-            //Depedencia tipo Singleton
-            IColaboradorValidation colaboradorValidation3 = new ColaboradorValidation();
-            IColaboradorService colaboradorService3 = new ColaboradorService(colaboradorRepository, colaboradorValidation3, pessoaRepository);
-            foreach (var colaboradorConsultado in colaboradorService3.ConsultarTodos())
+            //Depedencia tipo Scoped
+            IColaboradorValidation colaboradorValidation4 = new ColaboradorValidation();
+            IColaboradorService colaboradorService4 = new ColaboradorService(colaboradorRepository, colaboradorValidation4, pessoaRepository);
+            foreach (var colaboradorConsultado in colaboradorService4.ConsultarTodos())
             {
                 Console.WriteLine("Codigo:        " + colaboradorConsultado.Codigo);
                 Console.WriteLine("Cargo:         " + colaboradorConsultado.Cargo);
@@ -134,18 +175,26 @@ namespace Projeto.ConsoleApp
             Console.WriteLine("=========================================================================");
             Console.WriteLine("Criação do CLIENTE pelo operador do sistema, para simples teste...       ");
             
-            //Depedencia tipo Singleton
+            //Depedencia tipo Scoped
             IClienteValidation clienteValidation1 = new ClienteValidation();
             IClienteService clienteService1 = new ClienteService(clienteRepository, clienteValidation1, pessoaRepository);
-            var pessoaFisicaCliente = new PessoaFisica("fulaninho", "688.404.530-24", "99999999", DateTime.Now, "teste@teste.com", "99 9999-9999", "99 99999-9999", "Teste de sistema", "teste", 0, "teste", "teste", "teste", "teste", "SC", pais);
+
+            var pessoaFisicaCliente = new PessoaFisica("fulaninho", "688.404.530-24", "99999999", DateTime.Now, "teste@teste.com", 
+                                                       "99 9999-9999", "99 99999-9999", "Teste de sistema", "teste", 0, "teste", 
+                                                       "teste", "teste", "teste", "SC", pais);
+
             var clientePessoaFisica = new Cliente(pessoaFisicaCliente);
             clienteService1.Criar(clientePessoaFisica);
             Console.WriteLine("Cliente pessoa fisica Criada!");
 
-            //Depedencia tipo Singleton
+            //Depedencia tipo Scoped
             IClienteValidation clienteValidation2 = new ClienteValidation();
             IClienteService clienteService2 = new ClienteService(clienteRepository, clienteValidation2, pessoaRepository);
-            var pessoaJuridica1 = new PessoaJuridica("Empresinha", "Empresinha Teste", "56.310.237/0001-23", "614.912.493.506", "123.123.123", "Fulaninho", "teste@teste.com", "99 9999-9999", "99 99999-9999", "Teste de sistema", "teste", 0, "teste", "teste", "teste", "teste", "SC", pais);
+
+            var pessoaJuridica1 = new PessoaJuridica("Empresinha", "Empresinha Teste", "56.310.237/0001-23", "614.912.493.506", "123.123.123", 
+                                                     "Fulaninho", "teste@teste.com", "99 9999-9999", "99 99999-9999", "Teste de sistema", "teste", 
+                                                     0, "teste", "teste", "teste", "teste", "SC", pais);
+
             var clientePessoaJuridica = new Cliente(pessoaJuridica1);
             clienteService2.Criar(clientePessoaJuridica);
             Console.WriteLine("Cliente 2 pessoa juridica Criada!");
@@ -153,7 +202,7 @@ namespace Projeto.ConsoleApp
 
             Console.WriteLine("Clientes cadastrados: ");
 
-            //Depedencia tipo Singleton
+            //Depedencia tipo Scoped
             IClienteValidation clienteValidation3 = new ClienteValidation();
             IClienteService clienteService3 = new ClienteService(clienteRepository, clienteValidation3, pessoaRepository);
             
@@ -223,19 +272,19 @@ namespace Projeto.ConsoleApp
             Console.WriteLine("=========================================================================");
             Console.WriteLine("Criação do PET pelo operador do sistema, para simples teste...           ");
 
-            //Depedencia tipo Singleton
+            //Depedencia tipo Scoped
             IPetValidation petValidation1 = new PetValidation();
             IPetService petService1 = new PetService(petRepository, petValidation1);
             var petPessoaFisica = new Pet("Fufuzinho", "Cachorro", DateTime.Now, "PET TESTE 1", clientePessoaFisica);
             petService1.Criar(petPessoaFisica);
 
-            //Depedencia tipo Singleton
+            //Depedencia tipo Scoped
             IPetValidation petValidation2 = new PetValidation();
             IPetService petService2 = new PetService(petRepository, petValidation2);
             var petPessoaJuridica1 = new Pet("Zizizinho", "Gato", DateTime.Now, "PET TESTE 2", clientePessoaJuridica);
             petService2.Criar(petPessoaJuridica1);
 
-            //Depedencia tipo Singleton
+            //Depedencia tipo Scoped
             IPetValidation petValidation3 = new PetValidation();
             IPetService petService3 = new PetService(petRepository, petValidation3);
             var petPessoaJuridica2 = new Pet("Nanazinho", "Passaro", DateTime.Now, "PET TESTE 3", clientePessoaJuridica);
@@ -262,19 +311,19 @@ namespace Projeto.ConsoleApp
             Console.WriteLine("=========================================================================");
             Console.WriteLine("Criação do SERVIÇOS pelo operador do sistema, para simples teste...      ");
 
-            //Depedencia tipo Singleton
+            //Depedencia tipo Scoped
             IServicoValidation servicoValidation1 = new ServicoValidation();
             IServicoService servicoService1 = new ServicoService(servicoRepository, servicoValidation1);
             var servico1 = new Servico(clientePessoaFisica, petPessoaFisica, colaborador1, "Vacinação");
             servicoService1.Criar(servico1);
 
-            //Depedencia tipo Singleton
+            //Depedencia tipo Scoped
             IServicoValidation servicoValidation2 = new ServicoValidation();
             IServicoService servicoService2 = new ServicoService(servicoRepository, servicoValidation2);
             var servico2 = new Servico(clientePessoaJuridica, petPessoaJuridica1, colaborador2, "Banho");
             servicoService2.Criar(servico2);
 
-            //Depedencia tipo Singleton
+            //Depedencia tipo Scoped
             IServicoValidation servicoValidation3 = new ServicoValidation();
             IServicoService servicoService3 = new ServicoService(servicoRepository, servicoValidation3);
             var servico3 = new Servico(clientePessoaJuridica, petPessoaJuridica2, colaborador1, "Enfaixar");
@@ -282,7 +331,7 @@ namespace Projeto.ConsoleApp
             
             Console.WriteLine("Serviços cadastrados: ");
 
-            //Depedencia tipo Singleton
+            //Depedencia tipo Scoped
             IServicoValidation servicoValidation4 = new ServicoValidation();
             IServicoService servicoService4 = new ServicoService(servicoRepository, servicoValidation4);
 
@@ -296,6 +345,7 @@ namespace Projeto.ConsoleApp
                 Console.WriteLine("Cliente Codigo:" + servicoConsultado.Cliente.Codigo);
                 Console.WriteLine("Pet Codigo:    " + servicoConsultado.Pet.Codigo);
                 Console.WriteLine("Colab. Codigo: " + servicoConsultado.ColaboradorResponsavel.Codigo);
+                Console.WriteLine("Colab. Que Aprovou: " + servicoConsultado.GerenteQueAprovouServico?.Codigo);
                 Console.WriteLine("-----------------------");
             }
 
@@ -315,6 +365,7 @@ namespace Projeto.ConsoleApp
             Console.WriteLine("Cliente Codigo:" + servicoConsultado1.Cliente.Codigo);
             Console.WriteLine("Pet Codigo:    " + servicoConsultado1.Pet.Codigo);
             Console.WriteLine("Colab. Codigo: " + servicoConsultado1.ColaboradorResponsavel.Codigo);
+            Console.WriteLine("Colab. Que Aprovou: " + servicoConsultado1.GerenteQueAprovouServico?.Codigo);
             Console.WriteLine("-----------------------");
             
             Console.WriteLine("                                                                         ");
@@ -333,12 +384,13 @@ namespace Projeto.ConsoleApp
             Console.WriteLine("Cliente Codigo:" + servicoConsultado2.Cliente.Codigo);
             Console.WriteLine("Pet Codigo:    " + servicoConsultado2.Pet.Codigo);
             Console.WriteLine("Colab. Codigo: " + servicoConsultado2.ColaboradorResponsavel.Codigo);
+            Console.WriteLine("Colab. Que Aprovou: " + servicoConsultado2.GerenteQueAprovouServico?.Codigo);
             Console.WriteLine("-----------------------");
             Console.WriteLine("                                                                         ");
             Console.WriteLine("                                                                         ");
             Console.WriteLine("                                                                         ");
 
-            servico1.FinalizarServico();
+            servico1.FinalizarServico(colaborador3);
             servicoService4.EditarIniciarServico(servico1);
             Console.WriteLine("Serviço 1:");
             servicoConsultado1 = servicoService4.ConsultarPorCodigo(servico1.Codigo);
@@ -350,6 +402,7 @@ namespace Projeto.ConsoleApp
             Console.WriteLine("Cliente Codigo:" + servicoConsultado1.Cliente.Codigo);
             Console.WriteLine("Pet Codigo:    " + servicoConsultado1.Pet.Codigo);
             Console.WriteLine("Colab. Codigo: " + servicoConsultado1.ColaboradorResponsavel.Codigo);
+            Console.WriteLine("Colab. Que Aprovou: " + servicoConsultado1.GerenteQueAprovouServico?.Codigo);
             Console.WriteLine("-----------------------");
             Console.WriteLine("                                                                         ");
             Console.WriteLine("                                                                         ");
@@ -373,6 +426,7 @@ namespace Projeto.ConsoleApp
                 Console.WriteLine("Cliente Codigo:" + servicoConsultado.Cliente.Codigo);
                 Console.WriteLine("Pet Codigo:    " + servicoConsultado.Pet.Codigo);
                 Console.WriteLine("Colab. Codigo: " + servicoConsultado.ColaboradorResponsavel.Codigo);
+                Console.WriteLine("Colab. Que Aprovou: " + servicoConsultado.GerenteQueAprovouServico?.Codigo);
                 Console.WriteLine("-----------------------");
             }
             Console.WriteLine("=========================================================================");

@@ -52,7 +52,7 @@ namespace Projeto.Domain.Shared.Pessoas.PessoaValidations
                 .NotEmpty().WithMessage("CNPJ da empresa não pode ser vazio.")
                 .MaximumLength(14).WithMessage("CNPJ da empresa não pode ter mais que 14 caracteres.")
                 .MinimumLength(14).WithMessage("CNPJ da empresa não pode ter menos que 14 caracteres.")
-                .Must(IsCnpj).WithMessage("CNPJ da empresa está em um formato incorreto.");
+                .Must(IsCnpj).WithMessage("CNPJ da empresa está em um formato incorreto. Ele não é valido.");
         }
 
         private void InscricaoEstadualIsValid()

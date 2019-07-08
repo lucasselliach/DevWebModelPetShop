@@ -9,7 +9,12 @@ namespace Projeto.Data.Repositories.PaisRepository
     public class PaisRepository : IPaisRepository
     {
         //Somente para não usar nenhum DB
-        private readonly List<Pais> _paises = new List<Pais>();
+        private readonly IList<Pais> _paises;
+
+        public PaisRepository(IList<Pais> paises)
+        {
+            _paises = paises;
+        }
 
 
         public Pais ConsultarPorCodigo(Guid codigo)
@@ -29,7 +34,7 @@ namespace Projeto.Data.Repositories.PaisRepository
 
         public void Editar(Pais pais)
         {
-            _paises.RemoveAll(x => x.Codigo == pais.Codigo);
+            _paises.Remove(_paises.First(x => x.Codigo == pais.Codigo));
             _paises.Add(pais);
         }
 

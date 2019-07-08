@@ -15,6 +15,7 @@ namespace Projeto.Domain.Operacional.Servicos
         public string Status { get; private set; }
         public DateTime DataInicio { get; private set; }
         public DateTime DataFim { get; private set; }
+        public Colaborador GerenteQueAprovouServico { get; private set; }
 
         public Servico(Cliente cliente, Pet pet, Colaborador colaboradorResponsavel, string tipo)
         {
@@ -39,8 +40,9 @@ namespace Projeto.Domain.Operacional.Servicos
             DataInicio = DateTime.Now;
         }
 
-        public void FinalizarServico()
+        public void FinalizarServico(Colaborador gerenteQueAprovouServico)
         {
+            GerenteQueAprovouServico = gerenteQueAprovouServico;
             Status = "FINALIZADO";
             DataFim = DateTime.Now;
         }
